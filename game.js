@@ -1307,9 +1307,24 @@
     requestAnimationFrame(loop);
   }
 
-  overlay.addEventListener('click', (e) => {
-    const target = e.target.closest('[data-action], [data-fighter], [data-stage]');
+  /**
+   * オーバーレイメニュー上のボタン／カードがタップされたときの共通処理。
+   * iOS Safari では body の touch-action: none の影響で click イベントが
+   * 抑制されるケースがあるため、click と pointerup の両方から呼び出し、
+   * 350ms 以内の重複発火はガードする。
+   *
+   * @param {Element} target  data-action / data-fighter / data-stage を持つ要素
+   * @returns {void}
+   */
+  let lastOverlayActivateAt = 0;
+  function activateOverlayTarget(target) {
     if (!target) return;
+    const now = (typeof performance !== 'undefined' && performance.now)
+      ? performance.now()
+      : Date.now();
+    if (now - lastOverlayActivateAt < 350) return;
+    lastOverlayActivateAt = now;
+
     ensureAudio(); beep('click');
     if (target.dataset.fighter != null) {
       selectedFighter = Number(target.dataset.fighter);
@@ -1328,7 +1343,26 @@
     if (a === 'stage') showStageSelect();
     if (a === 'start') startBattle();
     if (a === 'restart') startBattle();
+  }
+
+  overlay.addEventListener('click', (e) => {
+    const target = e.target.closest('[data-action], [data-fighter], [data-stage]');
+    if (!target) return;
+    activateOverlayTarget(target);
   });
+
+  /* iOS Safari 対策:
+     body に touch-action: none を指定している影響で、メニュー内のボタンを
+     タップしても click イベントが合成されないことがある (特に結果画面など)。
+     pointerup (touch のみ) を保険として購読し、確実にメニュー操作が通るようにする。
+     - pointerType === 'touch' に限定 → マウス／ペンでは通常の click を優先
+     - activateOverlayTarget 側のデバウンスで click との二重発火を防止 */
+  overlay.addEventListener('pointerup', (e) => {
+    if (e.pointerType !== 'touch') return;
+    const target = e.target.closest('[data-action], [data-fighter], [data-stage]');
+    if (!target) return;
+    activateOverlayTarget(target);
+  }, { passive: true });
 
   window.addEventListener('keydown', (e) => {
     keys[e.code] = true;
