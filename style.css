@@ -281,7 +281,18 @@ html, body {
   #game { width: 100vw; height: calc(100vw * 9 / 16); max-height: var(--app-height, 100vh); border-radius: 0; }
   .touch-controls { display: flex; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .menu { padding: 18px; border-radius: 22px; }
+  /* スマホでは画面下部 ~150px をタッチコントロールが占有しているので、
+     メニュー本体をその上に収まる高さ／位置に押し上げる。
+     - max-height: タッチコントロール領域を差し引いた高さに制限
+     - top    : 残った領域の中央へメニューを再配置 (transform: translate(-50%,-50%) と組合せ)
+     - padding-bottom: 内部スクロール末尾にも余白を入れて最後のボタンが完全に見える */
+  .menu {
+    padding: 18px 18px calc(26px + env(safe-area-inset-bottom, 0px));
+    border-radius: 22px;
+    --touch-pad: calc(150px + env(safe-area-inset-bottom, 0px));
+    max-height: min(680px, calc(var(--app-height, 100vh) - 28px - var(--touch-pad)));
+    top: calc((var(--app-height, 100vh) - var(--touch-pad)) / 2);
+  }
   .card h3 { font-size: 15px; }
   .card p, .help { font-size: 12px; }
 }
@@ -343,6 +354,11 @@ html, body {
   /* 横持ちは画面幅にも余裕があるので従来の横一列レイアウトに戻す。
      上の縦持ち用グリッド指定を打ち消すため display を flex に戻す。 */
   .touch-controls { bottom: max(8px, env(safe-area-inset-bottom)); align-items: flex-end; }
+  /* 横持ちはタッチコントロールが 1 段で約 80px のため、メニューの予約領域を縮めて
+     縦方向の作業面積を広く取り直す。 */
+  .menu {
+    --touch-pad: calc(85px + env(safe-area-inset-bottom, 0px));
+  }
   .touch-left, .touch-right {
     display: flex;
     width: auto;
