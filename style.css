@@ -180,16 +180,72 @@ html, body {
 @media (max-width: 540px) {
   .grid, .stage-grid { grid-template-columns: 1fr; }
   .btn { min-width: 130px; padding: 12px 14px; }
-  .touch-controls { padding: 0 8px; gap: 6px; }
-  .touch-left, .touch-right { gap: 6px; }
-  .touch-controls button { min-width: 54px; height: 58px; font-size: 12px; padding:0 7px; }
-  .touch-left button, .touch-left button[data-touch=dash] { min-width: 55px; }
-  .touch-right button[data-touch=attack], .touch-right button[data-touch=special], .touch-right button[data-touch=jump], .touch-right button[data-touch=guard] { min-width: 62px; }
+
+  /* 縦持ちスマホでは横一列だと 7 ボタンが画面幅に収まらないため、
+     左右パネルをそれぞれ 2 列グリッドにして 2 段組みにする。
+     これによりタップしやすいサイズを保ったまま全ボタンを画面内に表示できる。 */
+  .touch-controls {
+    padding: 0 10px;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .touch-left {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 52px;
+    gap: 8px;
+    width: min(42vw, 190px);
+  }
+  .touch-left button {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    font-size: 18px;
+    padding: 0 6px;
+  }
+  .touch-left button[data-touch=dash] {
+    grid-column: 1 / -1;
+    height: 46px;
+    font-size: 13px;
+    min-width: 0;
+  }
+
+  .touch-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 52px;
+    gap: 8px;
+    width: min(48vw, 220px);
+  }
+  .touch-right button,
+  .touch-right button[data-touch=attack],
+  .touch-right button[data-touch=special],
+  .touch-right button[data-touch=jump],
+  .touch-right button[data-touch=guard] {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    font-size: 12px;
+    padding: 0 6px;
+  }
 }
 
 @media (orientation: landscape) and (max-height: 520px) {
-  .touch-controls { bottom: max(8px, env(safe-area-inset-bottom)); }
-  .touch-controls button { height: 58px; min-width: 58px; font-size: 13px; }
-  .touch-right button[data-touch=attack], .touch-right button[data-touch=special], .touch-right button[data-touch=jump], .touch-right button[data-touch=guard] { min-width: 68px; }
-  .touch-left button[data-touch=dash] { min-width: 70px; }
+  /* 横持ちは画面幅にも余裕があるので従来の横一列レイアウトに戻す。
+     上の縦持ち用グリッド指定を打ち消すため display を flex に戻す。 */
+  .touch-controls { bottom: max(8px, env(safe-area-inset-bottom)); align-items: flex-end; }
+  .touch-left, .touch-right {
+    display: flex;
+    width: auto;
+    gap: 6px;
+    grid-auto-rows: auto;
+  }
+  .touch-controls button { height: 58px; min-width: 58px; font-size: 13px; padding: 0 12px; width: auto; }
+  .touch-left button[data-touch=dash] { min-width: 70px; height: 58px; font-size: 13px; grid-column: auto; }
+  .touch-right button,
+  .touch-right button[data-touch=attack],
+  .touch-right button[data-touch=special],
+  .touch-right button[data-touch=jump],
+  .touch-right button[data-touch=guard] { min-width: 68px; height: 58px; font-size: 13px; width: auto; }
 }
