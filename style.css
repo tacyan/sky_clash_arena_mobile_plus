@@ -20,16 +20,22 @@ html, body {
   -webkit-user-select: none;
   touch-action: none;
 }
+/* iOS Safari の下部ツールバーぶんを差し引いた実視覚領域の高さ。
+   1) JS が visualViewport から計測して --app-height を毎フレーム更新する
+   2) JS 未対応 / 旧ブラウザでは 100vh にフォールバック
+   3) 100dvh 対応ブラウザ (Safari 15.4+, Chrome 108+ など) ではそちらを優先 */
 #app {
   position: relative;
   width: 100vw;
   height: 100vh;
+  height: var(--app-height, 100vh);
+  height: 100dvh;
   display: grid;
   place-items: center;
 }
 #game {
-  width: min(100vw, calc(100vh * 16 / 9));
-  height: min(100vh, calc(100vw * 9 / 16));
+  width: min(100vw, calc((var(--app-height, 100vh)) * 16 / 9));
+  height: min(var(--app-height, 100vh), calc(100vw * 9 / 16));
   display: block;
   border-radius: 18px;
   background: #000;
@@ -47,7 +53,7 @@ html, body {
   top: 50%;
   transform: translate(-50%, -50%);
   width: min(1120px, calc(100vw - 32px));
-  max-height: min(680px, calc(100vh - 28px));
+  max-height: min(680px, calc(var(--app-height, 100vh) - 28px));
   overflow: auto;
   padding: 26px;
   border: 1px solid var(--line);
@@ -135,13 +141,18 @@ html, body {
   line-height: 1.8;
 }
 .touch-controls {
+  /* #app の bottom (= --app-height で実測した可視領域の下端) に揃える。
+     iOS Safari の下部 URL バーや、Android の URL バー／ホームインジケータ
+     ぶんを max() で確保し、絶対にボタンが隠れないようにする。 */
   position: absolute;
-  left: 0; right: 0; bottom: max(12px, env(safe-area-inset-bottom));
+  left: 0; right: 0;
+  bottom: max(env(safe-area-inset-bottom), 14px);
   display: none;
   justify-content: space-between;
   align-items: flex-end;
   padding: 0 14px;
   pointer-events: none;
+  z-index: 20;
 }
 .touch-left, .touch-right { display: flex; gap: 9px; pointer-events: auto; align-items: flex-end; }
 .touch-controls button {
@@ -170,7 +181,7 @@ html, body {
 .touch-right button[data-touch=special] { min-width: 92px; background: linear-gradient(180deg, rgba(160, 76, 255, .95), rgba(93, 25, 183, .86)); }
 .touch-right button[data-touch=jump] { min-width: 88px; background: linear-gradient(180deg, rgba(37, 215, 255, .95), rgba(12, 125, 164, .86)); }
 @media (hover: none), (max-width: 860px) {
-  #game { width: 100vw; height: calc(100vw * 9 / 16); max-height: 100vh; border-radius: 0; }
+  #game { width: 100vw; height: calc(100vw * 9 / 16); max-height: var(--app-height, 100vh); border-radius: 0; }
   .touch-controls { display: flex; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .menu { padding: 18px; border-radius: 22px; }

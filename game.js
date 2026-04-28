@@ -1,6 +1,26 @@
 (() => {
   'use strict';
 
+  /**
+   * モバイルブラウザ (特に iOS Safari) では 100vh が下部ツールバー領域も含んだ
+   * 値を返してしまい、タッチボタンがツールバーの裏に隠れてしまう。
+   * visualViewport.height を毎回計測して --app-height に反映することで、
+   * dvh 非対応の旧バージョンでもボタンを必ず可視領域内に収める。
+   * @returns {void}
+   */
+  const updateAppHeight = () => {
+    const vv = window.visualViewport;
+    const h = vv ? vv.height : window.innerHeight;
+    document.documentElement.style.setProperty('--app-height', `${h}px`);
+  };
+  updateAppHeight();
+  window.addEventListener('resize', updateAppHeight, { passive: true });
+  window.addEventListener('orientationchange', updateAppHeight, { passive: true });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', updateAppHeight, { passive: true });
+    window.visualViewport.addEventListener('scroll', updateAppHeight, { passive: true });
+  }
+
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d');
   const overlay = document.getElementById('overlay');
