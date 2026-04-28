@@ -140,6 +140,103 @@ html, body {
   font-size: 13px;
   line-height: 1.8;
 }
+
+/* ===== 操作早見表 (showHowTo 用) =====
+   PC キー / スマホボタン / 説明 を一目で把握できるカードリスト。 */
+.controls-list {
+  margin: 14px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.controls-list .ctrl {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+}
+.controls-list .ctrl[data-accent="attack"]  { box-shadow: inset 3px 0 0 #196dff; }
+.controls-list .ctrl[data-accent="special"] { box-shadow: inset 3px 0 0 #a04cff; }
+.controls-list .ctrl[data-accent="guard"]   { box-shadow: inset 3px 0 0 #78e6ff; }
+.controls-list .ctrl[data-accent="jump"]    { box-shadow: inset 3px 0 0 #25d7ff; }
+.controls-list .ctrl[data-accent="dash"]    { box-shadow: inset 3px 0 0 #ffd250; }
+.controls-list .ctrl[data-accent="move"]    { box-shadow: inset 3px 0 0 #b8c5dd; }
+.controls-list .ctrl[data-accent="system"]  { box-shadow: inset 3px 0 0 #6b7794; }
+
+.controls-list .ctrl-icon {
+  width: 88px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  color: #08111c;
+  background: linear-gradient(180deg, #ffed98, #ffb833);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5);
+}
+.controls-list .ctrl[data-accent="attack"]  .ctrl-icon { background: linear-gradient(180deg, rgba(25,109,255,1), rgba(8,57,145,1)); color: #fff; }
+.controls-list .ctrl[data-accent="special"] .ctrl-icon { background: linear-gradient(180deg, rgba(160,76,255,1), rgba(93,25,183,1)); color: #fff; }
+.controls-list .ctrl[data-accent="guard"]   .ctrl-icon { background: linear-gradient(180deg, rgba(120,230,255,1), rgba(23,94,128,1)); color: #06212c; }
+.controls-list .ctrl[data-accent="jump"]    .ctrl-icon { background: linear-gradient(180deg, rgba(37,215,255,1), rgba(12,125,164,1)); color: #06212c; }
+.controls-list .ctrl[data-accent="dash"]    .ctrl-icon { background: linear-gradient(180deg, rgba(255,210,80,1), rgba(171,103,18,1)); color: #17110a; }
+.controls-list .ctrl[data-accent="move"]    .ctrl-icon { background: linear-gradient(180deg, rgba(80,100,140,.95), rgba(40,55,85,.95)); color: #fff; }
+.controls-list .ctrl[data-accent="system"]  .ctrl-icon { background: linear-gradient(180deg, rgba(60,70,95,.95), rgba(28,36,55,.95)); color: #cfd6e6; font-size: 12px; }
+
+.controls-list .ctrl-body { min-width: 0; }
+.controls-list .ctrl-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #f3f7ff;
+  letter-spacing: .02em;
+  margin: 0 0 4px;
+}
+.controls-list .ctrl-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+.controls-list .kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,.22);
+  border-bottom-width: 2px;
+  background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.06));
+  color: #f8fbff;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.controls-list .ctrl-or { color: var(--muted); font-size: 11px; align-self: center; padding: 0 2px; }
+.controls-list .ctrl-desc {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.controls-list .ctrl-desc b { color: #ffe49b; font-weight: 700; }
+
+@media (max-width: 720px) {
+  .controls-list { grid-template-columns: 1fr; gap: 8px; }
+  .controls-list .ctrl { padding: 10px 12px; grid-template-columns: 76px 1fr; gap: 10px; }
+  .controls-list .ctrl-icon { width: 76px; height: 44px; font-size: 12px; }
+  .controls-list .ctrl-name { font-size: 13px; }
+  .controls-list .ctrl-desc { font-size: 12px; }
+}
 .touch-controls {
   /* #app の bottom (= --app-height で実測した可視領域の下端) に揃える。
      iOS Safari の下部 URL バーや、Android の URL バー／ホームインジケータ

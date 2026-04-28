@@ -277,24 +277,137 @@
           <button class="btn secondary" data-action="howto">操作を見る</button>
         </div>
         <div class="help">
-          移動: A/D または ←/→　ダッシュ: Shift　ジャンプ: W/↑/Space　通常攻撃: J/X　ガード: L/↓　必殺: K/C　ポーズ: P　タイトル: Esc<br>
-          まずキャラを選び、次にステージを選ぶとバトル開始です。
+          <b style="color:#ffe49b">PC操作</b>: 移動 A/D・←/→　ダッシュ Shift　ジャンプ W/↑/Space　
+          <b style="color:#7ad0ff">通常攻撃 J または X</b>　
+          <b style="color:#9fe9ff">ガード L または ↓</b>　
+          <b style="color:#bb8cff">必殺技 K または C</b>　ポーズ P　タイトル Esc<br>
+          各ボタンの効果は <b>「操作を見る」</b> から早見表で確認できます。まずキャラを選び、次にステージを選ぶとバトル開始です。
         </div>
       </section>
     `);
   }
 
+  /**
+   * 操作早見表に表示する各アクションの定義。
+   * PC キーボード割り当て / スマホタッチボタン / 効果説明 を
+   * カードリスト形式でまとめて表示するためのデータソース。
+   * @type {Array<{ accent: string, icon: string, name: string, keys: string[][], touch: string|null, desc: string }>}
+   */
+  const controlsGuide = [
+    {
+      accent: 'move',
+      icon: '◀ ▶',
+      name: '移動',
+      keys: [['A', 'D'], ['←', '→']],
+      touch: '◀ / ▶',
+      desc: '左右に歩く。空中でも軌道を調整できる。<b>間合い管理が勝敗を分ける</b>。',
+    },
+    {
+      accent: 'dash',
+      icon: 'DASH',
+      name: 'ダッシュ',
+      keys: [['Shift']],
+      touch: 'DASH',
+      desc: '進行方向に高速移動。<b>接近・離脱・追撃</b>に。攻撃と組み合わせると強い。',
+    },
+    {
+      accent: 'jump',
+      icon: 'JUMP',
+      name: 'ジャンプ',
+      keys: [['W'], ['↑'], ['Space']],
+      touch: 'JUMP',
+      desc: 'ジャンプ。<b>翠嵐の格闘家のみ2段ジャンプ可</b>。空中での復帰や回避にも使う。',
+    },
+    {
+      accent: 'attack',
+      icon: 'ATTACK',
+      name: '通常攻撃',
+      keys: [['J'], ['X']],
+      touch: 'ATTACK',
+      desc: '基本攻撃。<b>連打でコンボ</b>になる。発生が早く、相手のガードを崩しに行く主力技。',
+    },
+    {
+      accent: 'guard',
+      icon: 'GUARD',
+      name: 'ガード',
+      keys: [['L'], ['↓']],
+      touch: 'GUARD',
+      desc: '構えて<b>被ダメージを大幅軽減</b>。仰け反りも無効。崩されないよう間合いを取って解除。',
+    },
+    {
+      accent: 'special',
+      icon: 'SKILL',
+      name: '必殺技',
+      keys: [['K'], ['C']],
+      touch: 'SKILL',
+      desc: 'キャラ固有の<b>強力な大技</b>。クールタイムが長い。剣士=突進斬り / 獣=咆哮 / 格闘家=回転蹴り / 魔導士=設置魔法。',
+    },
+    {
+      accent: 'system',
+      icon: 'PAUSE',
+      name: 'ポーズ',
+      keys: [['P']],
+      touch: null,
+      desc: '一時停止 / 再開。<b>戦況確認</b>や中断に使う。',
+    },
+    {
+      accent: 'system',
+      icon: 'RESTART',
+      name: 'リスタート',
+      keys: [['R']],
+      touch: null,
+      desc: 'バトル / 結果画面で押すと、<b>同条件で再戦</b>する。',
+    },
+    {
+      accent: 'system',
+      icon: 'TITLE',
+      name: 'タイトルへ',
+      keys: [['Esc']],
+      touch: null,
+      desc: 'いつでもタイトル画面に戻る。',
+    },
+  ];
+
+  /**
+   * 1 アクションぶんの操作カード HTML を生成する。
+   * @param {{accent:string, icon:string, name:string, keys:string[][], touch:string|null, desc:string}} ctrl
+   * @returns {string} カード HTML
+   */
+  function renderControlCard(ctrl) {
+    const keysHtml = ctrl.keys
+      .map(group => group.map(k => `<span class="kbd">${k}</span>`).join(''))
+      .join('<span class="ctrl-or">/</span>');
+    const touchHtml = ctrl.touch
+      ? `<span class="ctrl-or" style="margin-left:6px">スマホ</span><span class="kbd" style="background:linear-gradient(180deg,rgba(37,215,255,.35),rgba(12,125,164,.25));border-color:rgba(37,215,255,.5)">${ctrl.touch}</span>`
+      : `<span class="ctrl-or" style="margin-left:6px">PC専用</span>`;
+    return `
+      <div class="ctrl" data-accent="${ctrl.accent}">
+        <div class="ctrl-icon">${ctrl.icon}</div>
+        <div class="ctrl-body">
+          <p class="ctrl-name">${ctrl.name}</p>
+          <div class="ctrl-keys">${keysHtml}${touchHtml}</div>
+          <p class="ctrl-desc">${ctrl.desc}</p>
+        </div>
+      </div>
+    `;
+  }
+
   function showHowTo() {
+    const cardsHtml = controlsGuide.map(renderControlCard).join('');
     setOverlay(`
-      <section class="menu narrow">
+      <section class="menu">
         <h1 class="logo" style="font-size:52px">操作方法</h1>
-        <div class="help">
-          <b>勝利条件</b>: 相手を画面外へ吹っ飛ばしてストックを0にする。最後に残れば勝利。<br><br><b>スマホ版のコツ</b>: 左右で間合い調整、DASHで一気に接近/離脱、GUARDで攻撃を受け止め、SKILLでキャラ固有の強技を出します。<br><br>
-          <b>剣士</b>: 攻撃範囲が長い。安全に差し込める。<br>
-          <b>獣</b>: 一撃が重い。近づければ強い。<br>
-          <b>格闘家</b>: 空中機動とコンボが強い。2段ジャンプ。<br>
-          <b>魔導士</b>: 遠距離魔法が強い。近距離は弱め。<br><br>
-          火山ステージは火柱、氷ステージは滑りやすさがあります。
+        <p class="sub" style="margin:8px 0 6px">
+          <b style="color:#ffe49b">攻撃には3種類</b>あります。PCキーボードとスマホタッチの両方で同じ動作になります。
+          特に <b style="color:#7ad0ff">通常攻撃 (J/X)</b>・<b style="color:#bb8cff">必殺技 (K/C)</b>・<b style="color:#9fe9ff">ガード (L/↓)</b> の使い分けが攻略の鍵です。
+        </p>
+        <div class="controls-list">
+          ${cardsHtml}
+        </div>
+        <div class="help" style="margin-top:14px">
+          <b>勝利条件</b>: 相手を画面外へ吹っ飛ばしてストックを 0 にする。最後に残れば勝利。<br>
+          <b>キャラ別の特徴</b>: 剣士=リーチ長 / 獣=高火力 / 格闘家=空中機動 / 魔導士=遠距離。<br>
+          <b>ステージ</b>: 火山は火柱の発生、氷は滑りやすい床、空中遺跡は標準、都市は横に広い。
         </div>
         <div class="row" style="margin-top:16px">
           <button class="btn" data-action="character">キャラ選択へ</button>
