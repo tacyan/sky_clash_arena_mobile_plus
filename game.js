@@ -1328,12 +1328,33 @@
     ensureAudio(); beep('click');
     if (target.dataset.fighter != null) {
       selectedFighter = Number(target.dataset.fighter);
-      showCharacterSelect();
+      /* キャラ選択画面に居る間は、わざわざ画面全体を再生成すると
+         .menu の scrollTop が 0 に戻り「画面が一番上に飛ぶ」現象になる。
+         必要なのは選択ハイライトの付け替えだけなので、その場で .selected
+         クラスをトグルしてスクロール位置を保つ。
+         (state が異なる場合のみ画面遷移として再描画する) */
+      if (state === 'character') {
+        const cards = overlay.querySelectorAll('[data-fighter]');
+        for (const el of cards) {
+          el.classList.toggle('selected', Number(el.dataset.fighter) === selectedFighter);
+        }
+      } else {
+        showCharacterSelect();
+      }
       return;
     }
     if (target.dataset.stage != null) {
       selectedStage = Number(target.dataset.stage);
-      showStageSelect();
+      /* ステージ選択画面でも同様に、.selected クラスのみ差し替え。
+         キャラ選択画面など別の画面から来た場合だけ showStageSelect() で遷移。 */
+      if (state === 'stage') {
+        const cards = overlay.querySelectorAll('[data-stage]');
+        for (const el of cards) {
+          el.classList.toggle('selected', Number(el.dataset.stage) === selectedStage);
+        }
+      } else {
+        showStageSelect();
+      }
       return;
     }
     const a = target.dataset.action;
