@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Sky Clash Arena - Complete</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="game" width="1280" height="720"></canvas>
+
+    <div id="overlay" class="overlay"></div>
+
+    <div id="touchControls" class="touch-controls" aria-hidden="true">
+      <div class="touch-left">
+        <button data-touch="left">◀</button>
+        <button data-touch="right">▶</button>
+        <button data-touch="dash">DASH</button>
+      </div>
+      <div class="touch-right">
+        <button data-touch="jump">JUMP</button>
+        <button data-touch="attack">ATTACK</button>
+        <button data-touch="guard">GUARD</button>
+        <button data-touch="special">SKILL</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./game.js"></script>
+</body>
+</html>
